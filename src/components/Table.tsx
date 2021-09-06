@@ -2,9 +2,10 @@ import Client from "../core/Client";
 import { DeleteIcon, EditIcon } from "./Icons";
 
 interface TableProps {
+  children?: any;
   clients: Client[];
-  selectedClient?: (client: Client) => void
-  deletedClient?: (client: Client) => void
+  selectedClient?: (client: Client) => void;
+  deletedClient?: (client: Client) => void;
 }
 
 export function Table(props: TableProps) {
