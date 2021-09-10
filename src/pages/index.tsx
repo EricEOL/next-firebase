@@ -1,21 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { CollectionClient } from "../backend/db/CollectionClient";
 import { Button } from "../components/Button";
 import { Form } from "../components/Form";
 import { Layout } from "../components/Layout";
 import { Table } from "../components/Table";
 import Client from "../core/Client";
+import { RepositoriesClient } from "../core/RepositoriesClient";
 
 export default function Home() {
 
+  const repository: RepositoriesClient = new CollectionClient(); 
+
+  useEffect(getAllClients, []);
+
   const [visible, setVisible] = useState<'table' | 'form'>('table');
+  const [clients, setClients] = useState([]);
   const [client, setClient] = useState<Client>(Client.void());
 
-  const clients = [
-    new Client('Eric', 26, '1'),
-    new Client('Panda', 45, '2'),
-    new Client('Thamiris', 25, '3'),
-    new Client('Carlos', 59, '4')
-  ]
+  function getAllClients() {
+    repository.all().then(setClients);
+  }
 
   function newClient(){
     setClient(Client.void());
@@ -32,7 +36,8 @@ export default function Home() {
   }
 
   function clientSaved(client: Client) {
-    console.log(client);
+    repository.save(client);
+    getAllClients();
     setVisible('table');
   }
 
