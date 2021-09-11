@@ -31,8 +31,9 @@ export default function Home() {
     setVisible('form');
   }
 
-  function deletedClient(client: Client) {
-    console.log(client.name)
+  async function deletedClient(client: Client) {
+    await repository.delete(client);
+    getAllClients();
   }
 
   function clientSaved(client: Client) {
