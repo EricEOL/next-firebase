@@ -1,20 +1,34 @@
 import Client from "../../core/Client";
 import { RepositoriesClient } from "../../core/RepositoriesClient";
-import { collection, addDoc, getDocs, deleteDoc, doc } from "firebase/firestore"; 
+import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore"; 
 import { db } from "../config";
-import { v4 as uuidv4 } from 'uuid';
 
 export class CollectionClient implements RepositoriesClient {
 
   async save(client: Client): Promise<Client> {
-    try {
-      const docRef = await addDoc(collection(db, "clients"), {
-        name: client.name,
-        age: client.age
-      });
-    } catch (error) {
-      console.error(`Error: ${error}`);
+    const docRef = doc(db, "clients", client.id);
+    
+    if(!docRef) {
+      try {
+        await addDoc(collection(db, "clients"), {
+          name: client.name,
+          age: client.age
+        });
+      } catch (error) {
+        console.error(`Insert new doc error: ${error}`);
+      }
+    } else {
+      try {
+        await updateDoc(docRef, {
+          name: client.name,
+          age: client.age
+        });
+      } catch (error) {
+        console.log(`Update doc error: ${error}`)
+      }
     }
+    
+
     return null;
   }
 
