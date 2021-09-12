@@ -6,18 +6,12 @@ import { db } from "../config";
 export class CollectionClient implements RepositoriesClient {
 
   async save(client: Client): Promise<Client> {
-    const docRef = doc(db, "clients", client.id);
     
-    if(!docRef) {
-      try {
-        await addDoc(collection(db, "clients"), {
-          name: client.name,
-          age: client.age
-        });
-      } catch (error) {
-        console.error(`Insert new doc error: ${error}`);
-      }
-    } else {
+    const clientExists = client?.id;
+
+    if(clientExists) {
+      const docRef = await doc(db, "clients", client.id);
+
       try {
         await updateDoc(docRef, {
           name: client.name,
@@ -26,10 +20,19 @@ export class CollectionClient implements RepositoriesClient {
       } catch (error) {
         console.log(`Update doc error: ${error}`)
       }
-    }
-    
 
-    return null;
+    } else {
+      try {
+        await addDoc(collection(db, "clients"), {
+          name: client.name,
+          age: client.age
+        });
+      } catch (error) {
+        console.error(`Insert new doc error: ${error}`);
+      }
+    }
+
+    return;
   }
 
   async delete(client: Client): Promise<void> {
